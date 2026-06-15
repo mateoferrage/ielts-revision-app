@@ -28,12 +28,19 @@ export default function LoginPage() {
   }
 
   async function handleSignup() {
+    if (!email || !password) {
+      toast.error('Enter an email and password first.')
+      return
+    }
     setLoading(true)
-    const { error } = await supabase.auth.signUp({ email, password })
+    const { data, error } = await supabase.auth.signUp({ email, password })
     if (error) {
       toast.error(error.message)
+    } else if (data.session) {
+      // Email confirmation disabled — user is signed in immediately.
+      router.push('/dashboard')
     } else {
-      toast.success('Account created! Check your email.')
+      toast.success('Account created! Check your email to confirm.')
     }
     setLoading(false)
   }
